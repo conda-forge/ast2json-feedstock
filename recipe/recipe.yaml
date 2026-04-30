@@ -1,0 +1,52 @@
+schema_version: 1
+
+context:
+  name: ast2json
+  version: "0.4"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/ast2json-${{ version }}.tar.gz
+  sha256: b5cc42e97c29b77845b5d4ec32e74dcac538fb4c61a7faa570964bc96b19aeb7
+
+build:
+  number: 1
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - ast2json = ast2json.ast2json:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - pip
+    - setuptools
+  run:
+    - python >=${{ python_min }}
+
+tests:
+  - python:
+      imports:
+        - ast2json
+      pip_check: true
+      python_version: ${{ python_min }}
+  - requirements:
+      run:
+        - pip
+        - python ${{ python_min }}.*
+    script:
+      - echo 'print(str(1))' > test.py; ast2json < test.py
+
+about:
+  summary: convert a python source code into json-dumpable data (dict and lists with strings, ints, ...)
+  license: BSD-3-Clause
+  license_file: LICENSE
+  homepage: https://github.com/YoloSwagTeam/ast2json
+
+extra:
+  recipe-maintainers:
+    - jan-janssen
